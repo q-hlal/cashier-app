@@ -1,0 +1,82 @@
+.container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    gap: 10px;
+    background-color: #d6e4f0;
+    overflow: hidden;
+    padding: 20px;
+    box-sizing: border-box;
+    color: #1f3c63; 
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    position: relative;
+}
+.notifction {
+    position: absolute;
+    left: 40%;
+    width: 250px;
+    height: 50px;
+    border: 1px solid green;
+    background-color: greenyellow;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: -60px; /* Start position off-screen */
+    opacity: 0; /* Start with hidden notification */
+    animation: slideDown 0.5s ease-out forwards; /* Animation */
+}
+
+@keyframes slideDown {
+    0% {
+        top: -60px; /* Off-screen */
+        opacity: 0; /* Hidden */
+    }
+    100% {
+        top: 20px; /* Final position */
+        opacity: 1; /* Fully visible */
+    }
+}
+
+.inputs {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: center;
+}
+
+.inputs input , .inputs select {
+    padding: 10px;
+    border-radius: 3px;
+    border: 1px solid #ccc; 
+    font-size: 16px;
+    transition: border-color 0.3s ease; 
+}
+
+.inputs input:focus ,.inputs select:focus {
+    border-color: #1f3c63; 
+    outline: none; 
+    box-shadow: 0 0 5px rgba(31, 60, 99, 0.3); 
+}
+
+.qrcode {
+    flex: 2;
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+    background-color: #ffffff; 
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+}
+
+.container button {
+    padding: 10px 20px;
+    background-color: #1f3c63;
+    color: #ffffff; 
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
