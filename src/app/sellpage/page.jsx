@@ -1,6 +1,6 @@
 "use client";
 import styles from './sell.module.css';
-import { FaCartShopping , FaQrcode } from "react-icons/fa6";
+import { FaCartShopping, FaQrcode } from "react-icons/fa6";
 import { BiSolidDiscount } from "react-icons/bi";
 import { MdOutlinePriceChange, MdDeleteForever } from "react-icons/md";
 import { Html5QrcodeScanner } from 'html5-qrcode';
@@ -8,10 +8,10 @@ import { useState, useEffect } from 'react';
 
 const SellPage = () => {
   const [showScanner, setShowScanner] = useState(false);
-  const [discount, setDiscount] = useState("");
-  const [total, setTotal] = useState('');
+  const [discount, setDiscount] = useState(0);
+  const [total, setTotal] = useState(0);
   const [totalQuantity, setTotalQuantity] = useState(0);
-  const [notifction, setNotifction] = useState(false);
+  const [notification, setNotification] = useState(false);
 
   const [scannerValue, setScannerValue] = useState(() => {
     const savedValues = localStorage.getItem('scannerValue');
@@ -55,7 +55,7 @@ const SellPage = () => {
           setShowScanner(false);
         },
         (err) => {
-          console.log(err);
+          console.error("Scanner error:", err);
         }
       );
 
@@ -81,36 +81,32 @@ const SellPage = () => {
     setScannerValue(updatedValues);
   };
 
-  const handelSave = () => {
+  const handleSave = () => {
     const adminData = JSON.parse(localStorage.getItem('admin')) || {};
-    if (!adminData.netTotal) {
-      adminData.netTotal = total;
-    } else {
-      adminData.netTotal += total;
-    }
+    adminData.netTotal = (adminData.netTotal || 0) + total;
   
     localStorage.setItem('admin', JSON.stringify(adminData));
   
     localStorage.removeItem('scannerValue');
     setScannerValue([]);
-    setDiscount("")
-    setNotifction(true)
+    setDiscount(0);
+    setNotification(true);
 
     setTimeout(() => {
-      setNotifction(false)
+      setNotification(false);
     }, 2000);
   };
   
-  const handelCancel = () => {
+  const handleCancel = () => {
     localStorage.removeItem('scannerValue');
     setScannerValue([]);
-    setDiscount("")
+    setDiscount(0);
   };
   
 
   return (
     <div className={styles.container}>
-      {notifction && <span className={styles.notifction}>Salled successfuley</span>}
+      {notification && <span className={styles.notification}>Sale successful</span>}
       <div className={styles.topSell}>
         {scannerValue.map((item, index) => (
           <div className={styles.sellCard} key={index}>
@@ -135,7 +131,7 @@ const SellPage = () => {
               <div id='reader'></div>
             </div>
           )}
-          <button onClick={() => setShowScanner(!showScanner)}>
+          <button onClick={() => setShowScanner(prev => !prev)}>
             <FaQrcode />
           </button>
           <input 
@@ -158,20 +154,20 @@ const SellPage = () => {
               <span><BiSolidDiscount /></span>
               <div>
                 <h1>الخصم</h1>
-                <p>{discount.toLocaleString() || 0}</p>
+                <p>{discount.toLocaleString()}</p>
               </div>
             </div>
             <div className={styles.price}>
               <span><MdOutlinePriceChange /></span>
               <div>
                 <h1>صافي المبلغ</h1>
-                <p>{total.toLocaleString() || 0}</p>
+                <p>{total.toLocaleString()}</p>
               </div>
             </div>
           </div>
           <div className={styles.buttons}>
-            <button onClick={handelSave}>حفظ</button>
-            <button onClick={handelCancel}>الغاء</button>
+            <button onClick={handleSave}>حفظ</button>
+            <button onClick={handleCancel}>الغاء</button>
           </div>
         </div>
       </div>

@@ -8,7 +8,7 @@ const Page = () => {
   const [productType, setProductType] = useState("");
   const [price, setPrice] = useState(0);
   const [notifction, setNotifction] = useState(false);
-  const qrRef = useRef();
+  const qrRef = useRef(null);
 
   const items = [
     "jeans",
@@ -31,16 +31,18 @@ const Page = () => {
   };
 
   const handleDownload = () => {
-    const canvas = qrRef.current.querySelector("canvas");
-    const pngUrl = canvas
-      .toDataURL("image/png")
-      .replace("image/png", "image/octet-stream");
-    const downloadLink = document.createElement("a");
-    downloadLink.href = pngUrl;
-    downloadLink.download = `${productName}.png`;
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
+    if (typeof window !== 'undefined' && qrRef.current) { // Check if running in browser
+      const canvas = qrRef.current.querySelector("canvas");
+      const pngUrl = canvas
+        .toDataURL("image/png")
+        .replace("image/png", "image/octet-stream");
+      const downloadLink = document.createElement("a");
+      downloadLink.href = pngUrl;
+      downloadLink.download = `${productName}.png`;
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    }
   };
 
   const saveValue = () => {

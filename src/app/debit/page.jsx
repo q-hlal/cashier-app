@@ -1,5 +1,5 @@
 "use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './debit.module.css';
 
 const Page = () => {
@@ -9,16 +9,26 @@ const Page = () => {
   const [number, setNumber] = useState('');
   const [price, setPrice] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const [debitcard, setDebitcard] = useState(JSON.parse(localStorage.getItem('debit')) || []);
+  const [debitcard, setDebitcard] = useState([]);
   const [addAmount, setAddAmount] = useState('');
   const [getAmount, setGetAmount] = useState('');
 
+  useEffect(() => {
+    // Initialize state from localStorage
+    const storedDebit = JSON.parse(localStorage.getItem('debit')) || [];
+    setDebitcard(storedDebit);
+  }, []);
 
   const adminData = JSON.parse(localStorage.getItem('admin')) || { netTotal: 0, totelDebit: 0 };
   const profit = adminData.netTotal ? adminData.netTotal.toLocaleString() : 0;
   const debit = adminData.totelDebit ? adminData.totelDebit.toLocaleString() : 0;
 
   const handleDebitSave = () => {
+    if (!name || !number || !price || isNaN(price)) {
+      alert("Please enter valid data.");
+      return;
+    }
+
     const currentDate = new Date();
     const formattedDate = `${currentDate.getDate()}/${currentDate.getMonth() + 1}/${currentDate.getFullYear()}`;
     const formattedTime = currentDate.toLocaleTimeString();
@@ -27,19 +37,17 @@ const Page = () => {
       id: Date.now(), 
       name,
       number,
-      price,
+      price: parseFloat(price).toFixed(2),
       date: formattedDate,
       time: formattedTime,
     };
 
-    const existingDebits = JSON.parse(localStorage.getItem('debit')) || [];
-    const updatedDebits = [...existingDebits, debitEntry];
+    const updatedDebits = [...debitcard, debitEntry];
 
-    const currentTotalDebit = adminData.totelDebit || 0;
-    const updatedTotalDebit = currentTotalDebit + parseFloat(price);
+    const updatedTotalDebit = (adminData.totelDebit || 0) + parseFloat(price);
     
-    adminData.totelDebit = updatedTotalDebit;
-    localStorage.setItem('admin', JSON.stringify(adminData));
+    const updatedAdminData = { ...adminData, totelDebit: updatedTotalDebit };
+    localStorage.setItem('admin', JSON.stringify(updatedAdminData));
     localStorage.setItem('debit', JSON.stringify(updatedDebits));
 
     setDebitcard(updatedDebits);
@@ -52,6 +60,14 @@ const Page = () => {
 
   const handleDelete = (id) => {
     const updatedDebits = debitcard.filter(entry => entry.id !== id);
+    const deletedEntry = debitcard.find(entry => entry.id === id);
+
+    if (deletedEntry) {
+      const updatedTotalDebit = debitcard.reduce((total, entry) => total + parseFloat(entry.price), 0);
+      const updatedAdminData = { ...adminData, totelDebit: updatedTotalDebit };
+      localStorage.setItem('admin', JSON.stringify(updatedAdminData));
+    }
+
     localStorage.setItem('debit', JSON.stringify(updatedDebits));
     setDebitcard(updatedDebits);
   };
@@ -65,54 +81,54 @@ const Page = () => {
     entry.number.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handelDebitAdd = (id, addAmount) => {
-    const currentDate = new Date();
-    const formattedDate = `${currentDate.getDate()}/${currentDate.getMonth() + 1}/${currentDate.getFullYear()}`;
-    const formattedTime = currentDate.toLocaleTimeString();
+  const handleDebitAdd = (id, addAmount) => {
+    if (isNaN(addAmount) || addAmount <= 0) {
+      alert("Please enter a valid amount.");
+      return;
+    }
 
     const updatedDebits = debitcard.map(entry => {
       if (entry.id === id) {
         entry.price = (parseFloat(entry.price) + parseFloat(addAmount)).toFixed(2);
-        entry.date = formattedDate; // Update the date
-        entry.time = formattedTime; // Update the time
+        entry.date = new Date().toLocaleDateString();
+        entry.time = new Date().toLocaleTimeString();
       }
       return entry;
     });
 
     const updatedTotalDebit = updatedDebits.reduce((total, entry) => total + parseFloat(entry.price), 0);
-    adminData.totelDebit = updatedTotalDebit;
-    localStorage.setItem('admin', JSON.stringify(adminData));
+    const updatedAdminData = { ...adminData, totelDebit: updatedTotalDebit };
+    localStorage.setItem('admin', JSON.stringify(updatedAdminData));
     localStorage.setItem('debit', JSON.stringify(updatedDebits));
 
     setDebitcard(updatedDebits);
     setAddAmount('');
   };
 
-  const handelDebitGet = (id, getAmount) => {
-    const currentDate = new Date();
-    const formattedDate = `${currentDate.getDate()}/${currentDate.getMonth() + 1}/${currentDate.getFullYear()}`;
-    const formattedTime = currentDate.toLocaleTimeString();
+  const handleDebitGet = (id, getAmount) => {
+    if (isNaN(getAmount) || getAmount <= 0) {
+      alert("Please enter a valid amount.");
+      return;
+    }
 
     const updatedDebits = debitcard.map(entry => {
       if (entry.id === id) {
         entry.price = (parseFloat(entry.price) - parseFloat(getAmount)).toFixed(2);
-        entry.date = formattedDate; 
-        entry.time = formattedTime; 
+        entry.date = new Date().toLocaleDateString();
+        entry.time = new Date().toLocaleTimeString();
       }
       return entry;
     });
 
     const updatedTotalDebit = updatedDebits.reduce((total, entry) => total + parseFloat(entry.price), 0);
-    adminData.totelDebit = updatedTotalDebit;
-
     const updatedNetTotal = adminData.netTotal + parseFloat(getAmount);
-    adminData.netTotal = updatedNetTotal;
+    const updatedAdminData = { ...adminData, totelDebit: updatedTotalDebit, netTotal: updatedNetTotal };
 
-    localStorage.setItem('admin', JSON.stringify(adminData));
+    localStorage.setItem('admin', JSON.stringify(updatedAdminData));
     localStorage.setItem('debit', JSON.stringify(updatedDebits));
 
     setDebitcard(updatedDebits);
-    setGetAmount(''); 
+    setGetAmount('');
   };
 
   return (
@@ -148,7 +164,7 @@ const Page = () => {
                           value={addAmount} 
                           onChange={(e) => setAddAmount(e.target.value)} 
                         />
-                        <button onClick={() => handelDebitAdd(entry.id, addAmount)}>تاكيد</button>
+                        <button onClick={() => handleDebitAdd(entry.id, addAmount)}>تاكيد</button>
                       </span>
                       <span>
                         <input 
@@ -156,7 +172,7 @@ const Page = () => {
                           value={getAmount}
                           onChange={(e) => setGetAmount(e.target.value)} 
                         />
-                        <button onClick={() => handelDebitGet(entry.id, getAmount)}>تاكيد</button>
+                        <button onClick={() => handleDebitGet(entry.id, getAmount)}>تاكيد</button>
                       </span>
                     </div>
                   )}

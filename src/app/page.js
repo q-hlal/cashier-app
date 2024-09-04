@@ -1,3 +1,4 @@
+"use client"
 import SellPage from "./sellpage/page";
 import "./globals.css"
 
