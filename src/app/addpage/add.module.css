@@ -23,19 +23,19 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    top: -60px; /* Start position off-screen */
-    opacity: 0; /* Start with hidden notification */
-    animation: slideDown 0.5s ease-out forwards; /* Animation */
+    top: -60px; 
+    opacity: 0; 
+    animation: slideDown 0.5s ease-out forwards;
 }
 
 @keyframes slideDown {
     0% {
-        top: -60px; /* Off-screen */
-        opacity: 0; /* Hidden */
+        top: -60px; 
+        opacity: 0; 
     }
     100% {
-        top: 20px; /* Final position */
-        opacity: 1; /* Fully visible */
+        top: 20px;
+        opacity: 1; 
     }
 }
 
@@ -79,4 +79,10 @@
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
+}
+@media (max-width : 768px) {
+    .container{
+        flex-direction: column;
+        height: 95vh;
+    }
 }

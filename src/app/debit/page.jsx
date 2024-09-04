@@ -96,8 +96,8 @@ const Page = () => {
     const updatedDebits = debitcard.map(entry => {
       if (entry.id === id) {
         entry.price = (parseFloat(entry.price) - parseFloat(getAmount)).toFixed(2);
-        entry.date = formattedDate; // Update the date
-        entry.time = formattedTime; // Update the time
+        entry.date = formattedDate; 
+        entry.time = formattedTime; 
       }
       return entry;
     });

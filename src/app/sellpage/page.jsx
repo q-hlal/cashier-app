@@ -145,7 +145,7 @@ const SellPage = () => {
             onChange={(e) => setDiscount(parseFloat(e.target.value) || 0)}
           />
         </div>
-        <div>
+        <div className={styles.bottomPrice}>
           <div className={styles.priceDetail}>
             <div className={styles.quantity}>
               <span><FaCartShopping /></span>

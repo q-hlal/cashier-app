@@ -19,9 +19,9 @@
     display: flex;
     flex-direction: column;
     padding: 20px;
-    background-color: #ffffff; /* White background for card */
-    border-radius: 15px; /* Rounded corners */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+    background-color: #ffffff; 
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); 
 }
 
 .topAdmin {
@@ -52,13 +52,13 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 20px;overflow-y: auto;
 }
 
 .debitCard {
     width: 100%;
     padding: 20px;
-    background-color: #e9f1f7; /* Light blue-gray for debit card */
+    background-color: #e9f1f7; 
     border-radius: 10px;
     display: flex;
     align-items: center;
@@ -212,3 +212,27 @@
     justify-content: center;
     font-size: 7em;
   }
+@media (max-width : 768px) {
+    .container{
+        height: 95vh;
+    }
+   .debitCard{
+    flex-direction: column;
+   }
+   .time{
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+   }
+   .info{
+    flex-direction: column;
+}
+    
+    .info span{
+        flex-direction: row;
+        justify-content: space-around;
+    }
+    .add{
+        margin-top: 5px;
+    }
+}
