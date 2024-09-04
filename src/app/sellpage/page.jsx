@@ -14,12 +14,19 @@ const SellPage = () => {
   const [notification, setNotification] = useState(false);
 
   const [scannerValue, setScannerValue] = useState(() => {
-    const savedValues = localStorage.getItem('scannerValue');
-    return savedValues ? JSON.parse(savedValues) : [];
+    // Check if the code is running on the client side
+    if (typeof window !== 'undefined') {
+      const savedValues = localStorage.getItem('scannerValue');
+      return savedValues ? JSON.parse(savedValues) : [];
+    }
+    return [];
   });
 
   useEffect(() => {
-    localStorage.setItem('scannerValue', JSON.stringify(scannerValue));
+    // Check if the code is running on the client side
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('scannerValue', JSON.stringify(scannerValue));
+    }
   }, [scannerValue]);
 
   useEffect(() => {
@@ -66,14 +73,16 @@ const SellPage = () => {
   }, [showScanner]);
 
   useEffect(() => {
-    const savedValues = JSON.parse(localStorage.getItem('scannerValue')) || [];
-    const totalAmount = savedValues.reduce((sum, item) => sum + item.price, 0);
-    const totalItems = savedValues.reduce((sum, item) => sum + item.quantity, 0);
+    if (typeof window !== 'undefined') {
+      const savedValues = JSON.parse(localStorage.getItem('scannerValue')) || [];
+      const totalAmount = savedValues.reduce((sum, item) => sum + item.price, 0);
+      const totalItems = savedValues.reduce((sum, item) => sum + item.quantity, 0);
 
-    const netTotal = totalAmount - discount;
+      const netTotal = totalAmount - discount;
 
-    setTotal(netTotal);
-    setTotalQuantity(totalItems);
+      setTotal(netTotal);
+      setTotalQuantity(totalItems);
+    }
   }, [scannerValue, discount]);
 
   const handleDelete = (itemName) => {
@@ -82,27 +91,30 @@ const SellPage = () => {
   };
 
   const handleSave = () => {
-    const adminData = JSON.parse(localStorage.getItem('admin')) || {};
-    adminData.netTotal = (adminData.netTotal || 0) + total;
-  
-    localStorage.setItem('admin', JSON.stringify(adminData));
-  
-    localStorage.removeItem('scannerValue');
-    setScannerValue([]);
-    setDiscount(0);
-    setNotification(true);
+    if (typeof window !== 'undefined') {
+      const adminData = JSON.parse(localStorage.getItem('admin')) || {};
+      adminData.netTotal = (adminData.netTotal || 0) + total;
 
-    setTimeout(() => {
-      setNotification(false);
-    }, 2000);
+      localStorage.setItem('admin', JSON.stringify(adminData));
+
+      localStorage.removeItem('scannerValue');
+      setScannerValue([]);
+      setDiscount(0);
+      setNotification(true);
+
+      setTimeout(() => {
+        setNotification(false);
+      }, 2000);
+    }
   };
   
   const handleCancel = () => {
-    localStorage.removeItem('scannerValue');
-    setScannerValue([]);
-    setDiscount(0);
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('scannerValue');
+      setScannerValue([]);
+      setDiscount(0);
+    }
   };
-  
 
   return (
     <div className={styles.container}>

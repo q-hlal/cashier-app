@@ -12,16 +12,17 @@ const Page = () => {
   const [debitcard, setDebitcard] = useState([]);
   const [addAmount, setAddAmount] = useState('');
   const [getAmount, setGetAmount] = useState('');
+  const [adminData, setAdminData] = useState({ netTotal: 0, totelDebit: 0 });
 
   useEffect(() => {
-    // Initialize state from localStorage
-    const storedDebit = JSON.parse(localStorage.getItem('debit')) || [];
-    setDebitcard(storedDebit);
-  }, []);
+    if (typeof window !== 'undefined') {
+      const storedDebit = JSON.parse(localStorage.getItem('debit')) || [];
+      setDebitcard(storedDebit);
 
-  const adminData = JSON.parse(localStorage.getItem('admin')) || { netTotal: 0, totelDebit: 0 };
-  const profit = adminData.netTotal ? adminData.netTotal.toLocaleString() : 0;
-  const debit = adminData.totelDebit ? adminData.totelDebit.toLocaleString() : 0;
+      const storedAdminData = JSON.parse(localStorage.getItem('admin')) || { netTotal: 0, totelDebit: 0 };
+      setAdminData(storedAdminData);
+    }
+  }, []);
 
   const handleDebitSave = () => {
     if (!name || !number || !price || isNaN(price)) {
@@ -43,14 +44,16 @@ const Page = () => {
     };
 
     const updatedDebits = [...debitcard, debitEntry];
-
     const updatedTotalDebit = (adminData.totelDebit || 0) + parseFloat(price);
-    
     const updatedAdminData = { ...adminData, totelDebit: updatedTotalDebit };
-    localStorage.setItem('admin', JSON.stringify(updatedAdminData));
-    localStorage.setItem('debit', JSON.stringify(updatedDebits));
+
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('admin', JSON.stringify(updatedAdminData));
+      localStorage.setItem('debit', JSON.stringify(updatedDebits));
+    }
 
     setDebitcard(updatedDebits);
+    setAdminData(updatedAdminData);
 
     setName('');
     setNumber('');
@@ -63,23 +66,22 @@ const Page = () => {
     const deletedEntry = debitcard.find(entry => entry.id === id);
 
     if (deletedEntry) {
-      const updatedTotalDebit = debitcard.reduce((total, entry) => total + parseFloat(entry.price), 0);
+      const updatedTotalDebit = updatedDebits.reduce((total, entry) => total + parseFloat(entry.price), 0);
       const updatedAdminData = { ...adminData, totelDebit: updatedTotalDebit };
-      localStorage.setItem('admin', JSON.stringify(updatedAdminData));
-    }
 
-    localStorage.setItem('debit', JSON.stringify(updatedDebits));
-    setDebitcard(updatedDebits);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('admin', JSON.stringify(updatedAdminData));
+        localStorage.setItem('debit', JSON.stringify(updatedDebits));
+      }
+
+      setDebitcard(updatedDebits);
+      setAdminData(updatedAdminData);
+    }
   };
 
   const handleEdit = (id) => {
     setEditId(editId === id ? null : id); 
   };
-
-  const filteredDebits = debitcard.filter(entry => 
-    entry.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    entry.number.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   const handleDebitAdd = (id, addAmount) => {
     if (isNaN(addAmount) || addAmount <= 0) {
@@ -98,10 +100,14 @@ const Page = () => {
 
     const updatedTotalDebit = updatedDebits.reduce((total, entry) => total + parseFloat(entry.price), 0);
     const updatedAdminData = { ...adminData, totelDebit: updatedTotalDebit };
-    localStorage.setItem('admin', JSON.stringify(updatedAdminData));
-    localStorage.setItem('debit', JSON.stringify(updatedDebits));
+
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('admin', JSON.stringify(updatedAdminData));
+      localStorage.setItem('debit', JSON.stringify(updatedDebits));
+    }
 
     setDebitcard(updatedDebits);
+    setAdminData(updatedAdminData);
     setAddAmount('');
   };
 
@@ -124,19 +130,27 @@ const Page = () => {
     const updatedNetTotal = adminData.netTotal + parseFloat(getAmount);
     const updatedAdminData = { ...adminData, totelDebit: updatedTotalDebit, netTotal: updatedNetTotal };
 
-    localStorage.setItem('admin', JSON.stringify(updatedAdminData));
-    localStorage.setItem('debit', JSON.stringify(updatedDebits));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('admin', JSON.stringify(updatedAdminData));
+      localStorage.setItem('debit', JSON.stringify(updatedDebits));
+    }
 
     setDebitcard(updatedDebits);
+    setAdminData(updatedAdminData);
     setGetAmount('');
   };
+
+  const filteredDebits = debitcard.filter(entry => 
+    entry.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    entry.number.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className={styles.container}>
       <div className={styles.debit}>
         <div className={styles.topAdmin}>
-          <h2>اجمالي_النقد: {profit}</h2>
-          <h2>اجمالي_الدين: {debit}</h2>
+          <h2>اجمالي_النقد: {adminData.netTotal.toLocaleString()}</h2>
+          <h2>اجمالي_الدين: {adminData.totelDebit.toLocaleString()}</h2>
         </div>
         <input 
           placeholder='بحث' 
@@ -158,7 +172,7 @@ const Page = () => {
                   </h3>
                   {editId === entry.id && (
                     <div>
-                       <span>
+                      <span>
                         <input 
                           placeholder='اضافه دين' 
                           value={addAmount} 
