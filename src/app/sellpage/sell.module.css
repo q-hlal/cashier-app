@@ -179,17 +179,32 @@
     opacity: 0;
     animation: slideDown 0.5s ease-out forwards; 
 }
-
-@keyframes slideDown {
-    0% {
-        top: -60px;
+    .notifction {
+        position: absolute;
+        left: 40%;
+        width: 250px;
+        height: 50px;
+        border: 1px solid green;
+        background-color: greenyellow;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        top: -60px; 
         opacity: 0; 
+        animation: slideDown 0.5s ease-out forwards;
     }
-    100% {
-        top: 20px; 
-        opacity: 1; 
+    
+    @keyframes slideDown {
+        0% {
+            top: -60px; 
+            opacity: 0; 
+        }
+        100% {
+            top: 20px;
+            opacity: 1; 
+        }
     }
-}
 @media (max-width : 768px) {
     .container{
         flex-direction: column;

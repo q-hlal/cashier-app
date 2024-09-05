@@ -149,8 +149,8 @@ const Page = () => {
     <div className={styles.container}>
       <div className={styles.debit}>
         <div className={styles.topAdmin}>
-          <h2>اجمالي_النقد: {adminData.netTotal.toLocaleString()}</h2>
-          <h2>اجمالي_الدين: {adminData.totelDebit.toLocaleString()}</h2>
+          <h2>اجمالي_النقد: {(adminData.netTotal ? adminData.netTotal.toLocaleString() : 0)}</h2>
+          <h2>اجمالي_الدين: {(adminData.totelDebit ? adminData.totelDebit.toLocaleString() : 0)}</h2>
         </div>
         <input 
           placeholder='بحث' 
@@ -168,7 +168,7 @@ const Page = () => {
                 </div>
                 <div className={styles.amount}>
                   <h3 className={parseFloat(entry.price) === 0 ? styles.complet : styles.price}>
-                    {parseFloat(entry.price) === 0 ? 'تم استلام المبلغ' : `مبلغ الدين : ${Number(entry.price).toLocaleString()}`}
+                  {parseFloat(entry.price) === 0 ? 'تم استلام المبلغ' : `مبلغ الدين : ${(entry.price ? Number(entry.price).toLocaleString() : 0)}`}
                   </h3>
                   {editId === entry.id && (
                     <div>
