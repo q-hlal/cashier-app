@@ -224,6 +224,9 @@
     flex-direction: row;
     justify-content: space-between;
    }
+   .note{
+    font-size: 3em;
+   }
    .info{
     flex-direction: column;
 }

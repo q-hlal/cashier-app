@@ -205,7 +205,7 @@ const Page = () => {
               </div>
             ))
           ) : (
-            <p className={styles.note}>لا يوجد عميل بهذه الاسم </p>
+            <p className={styles.note}>لا يوجد دين حاليا  </p>
           )}
         </div>
         {addCard && (
